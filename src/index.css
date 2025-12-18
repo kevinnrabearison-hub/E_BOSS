@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Poppins', sans-serif;
+}
+
+/* ---------------- LIGHT (par défaut) ---------------- */
+body {
+  @apply bg-white text-black text-sm antialiased font-sans transition-colors duration-300;
+}
+
+/* ---------------- DARK ---------------- */
+.dark body {
+  @apply bg-black text-white;
+}
+
+/* ---------------- Components ---------------- */
+@layer components {
+
+  /* Glass effect */
+  .glass {
+    @apply border rounded-xl backdrop-blur-md transition-all duration-300;
+  }
+
+  .dark .glass {
+    @apply bg-white/10 border-white/20;
+  }
+
+  body:not(.dark) .glass {
+    @apply bg-black/5 border-black/10;
+  }
+
+  /* Button */
+  .btn {
+    @apply cursor-pointer rounded-full px-8 py-2.5 font-medium transition-all duration-300 hover:opacity-90 active:scale-95;
+  }
+
+  .dark .btn {
+    @apply text-white bg-white/10 border border-white/20;
+  }
+
+  body:not(.dark) .btn {
+    @apply text-black bg-black/5 border border-black/10;
+  }
+
+  /* Optional hover effect for theme buttons */
+  .dark .btn:hover {
+    @apply bg-white/20;
+  }
+
+  body:not(.dark) .btn:hover {
+    @apply bg-black/10;
+  }
+}
