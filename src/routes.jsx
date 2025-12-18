@@ -1,18 +1,30 @@
 import { Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import AgentsPage from "./pages/AgentsPage";
-import UseCasesPage from "./pages/UseCasesPage";
-import PricingPage from "./pages/PricingPage";
-import DocsPage from "./pages/DocsPage";
+import App from "./App";
+import ContactView from "./views/ContactView";
+import SupportView from "./views/SupportView";
+import AproposView from "./views/AproposView";
+import LoginView from "./views/auth/LoginView";
+import RegisterView from "./views/auth/RegisterView";
+import MessageView from "./views/MessageView";
+import Dashboard from "./components/user/dashboard";
+import Profile from "./components/user/profile";
+import Messages from "./components/user/Messages";
+import Actualite from "./components/user/actuality";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/agents" element={<AgentsPage />} />
-      <Route path="/use-cases" element={<UseCasesPage />} />
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/docs" element={<DocsPage />} />
+      <Route path="/" element={<App />} />
+      <Route path="/contact" element={<ContactView />} />
+      <Route path="/support" element={<SupportView />} />
+      <Route path="/apropos" element={<AproposView />} />
+      <Route path="/login" element={<LoginView />} />
+      <Route path="/register" element={<RegisterView />} />
+      <Route path="/messages" element={<MessageView />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard/profile" element={<Profile />} />
+      <Route path="/dashboard/messages" element={<Messages />} />
+      <Route path="/dashboard/actualite" element={<Actualite />} />
     </Routes>
   );
 }

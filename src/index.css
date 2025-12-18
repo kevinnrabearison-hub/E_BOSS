@@ -1,55 +1,90 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-@theme {
+:root {
   --font-sans: 'Poppins', sans-serif;
 }
 
 /* ---------------- LIGHT (par défaut) ---------------- */
 body {
-  @apply bg-white text-black text-sm antialiased font-sans transition-colors duration-300;
+  background-color: rgb(224, 219, 219);
+  color: black;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 
 /* ---------------- DARK ---------------- */
 .dark body {
-  @apply bg-black text-white;
+  background-color: black;
+  color: white;
 }
 
 /* ---------------- Components ---------------- */
-@layer components {
+.glass {
+  border-radius: 0.75rem;
+  backdrop-filter: blur(12px);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  border-width: 1px;
+  border-style: solid;
+}
 
-  /* Glass effect */
-  .glass {
-    @apply border rounded-xl backdrop-blur-md transition-all duration-300;
-  }
+.dark .glass {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
 
-  .dark .glass {
-    @apply bg-white/10 border-white/20;
-  }
+body:not(.dark) .glass {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
 
-  body:not(.dark) .glass {
-    @apply bg-black/5 border-black/10;
-  }
+/* Button */
+.btn {
+  cursor: pointer;
+  border-radius: 9999px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-weight: 500;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
 
-  /* Button */
-  .btn {
-    @apply cursor-pointer rounded-full px-8 py-2.5 font-medium transition-all duration-300 hover:opacity-90 active:scale-95;
-  }
+.btn:hover {
+  opacity: 0.9;
+}
 
-  .dark .btn {
-    @apply text-white bg-white/10 border border-white/20;
-  }
+.btn:active {
+  transform: scale(0.95);
+}
 
-  body:not(.dark) .btn {
-    @apply text-black bg-black/5 border border-black/10;
-  }
+.dark .btn {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
 
-  /* Optional hover effect for theme buttons */
-  .dark .btn:hover {
-    @apply bg-white/20;
-  }
+body:not(.dark) .btn {
+  color: black;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
 
-  body:not(.dark) .btn:hover {
-    @apply bg-black/10;
-  }
+/* Optional hover effect for theme buttons */
+.dark .btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+body:not(.dark) .btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
