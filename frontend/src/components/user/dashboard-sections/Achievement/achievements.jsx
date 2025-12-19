@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Loader2 } from 'lucide-react';
-import { dashboardAPI } from '../../../../services/dashboardAPI';
+import { dashboardAPI } from '../../../../services/dashboardExpressAPI';
 
 const Achievements = () => {
   const [achievements, setAchievements] = useState([]);

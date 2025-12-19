@@ -6,7 +6,7 @@ from typing import List, Dict, Optional
 import uvicorn
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 import random
 import os
@@ -17,6 +17,7 @@ from chatbot import ChatbotAI
 from fake_news_detector import FakeNewsDetector
 from message_analyzer import MessageAnalyzer
 from dashboard_automation import DashboardAutomation
+from content_moderator import ContentModerator
 
 app = FastAPI(title="Educational Platform AI API", version="1.0.0")
 
@@ -28,7 +29,7 @@ app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 # Configuration CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5174"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +40,7 @@ chatbot = ChatbotAI()
 fake_news_detector = FakeNewsDetector()
 message_analyzer = MessageAnalyzer()
 dashboard_automation = DashboardAutomation()
+content_moderator = ContentModerator()
 
 # Modèles de données
 class TutorRequest(BaseModel):
@@ -66,6 +68,11 @@ class DashboardAutomationRequest(BaseModel):
     action: str
     parameters: Optional[Dict] = None
     user_context: Optional[Dict] = None
+
+class ContentModerationRequest(BaseModel):
+    image_data: str  # Base64 encoded image
+    user_id: Optional[str] = None
+    context: Optional[str] = None
 
 # Routes Chatbot
 @app.post("/api/chatbot/chat")
@@ -207,10 +214,208 @@ async def get_analytics():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Routes de santé et monitoring
+# Routes Content Moderation
+@app.post("/api/content/analyze-image")
+async def analyze_image_content(request: ContentModerationRequest):
+    """Analyser une image pour détecter du contenu inapproprié"""
+    try:
+        # Décoder les données base64
+        import base64
+        image_data = base64.b64decode(request.image_data)
+        
+        # Analyser l'image
+        result = await content_moderator.analyze_image(image_data)
+        
+        return {
+            "status": "success",
+            "analysis": result,
+            "safe": result["safe"],
+            "recommendation": result["recommendation"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/content/batch-analyze")
+async def batch_analyze_images(images_data: List[str]):
+    """Analyser plusieurs images en batch"""
+    try:
+        import base64
+        decoded_images = [base64.b64decode(img) for img in images_data]
+        
+        results = await content_moderator.batch_analyze(decoded_images)
+        
+        return {
+            "status": "success",
+            "results": results,
+            "all_safe": all(r["safe"] for r in results)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/content/stats")
+async def get_content_stats():
+    """Statistiques de modération de contenu"""
+    try:
+        stats = content_moderator.get_moderation_stats()
+        return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Routes Admin Dashboard
+@app.post("/api/admin/analysis")
+async def admin_analysis(data: dict):
+    """Recevoir les données d'analyse pour le dashboard admin"""
+    try:
+        print(f"Données d'analyse reçues: {data}")
+        # Stocker les données d'analyse (pour l'instant en mémoire)
+        if not hasattr(admin_analysis, 'data'):
+            admin_analysis.data = []
+        
+        admin_analysis.data.append(data)
+        print(f"Total analyses stockées: {len(admin_analysis.data)}")
+        print(f"Dernière analyse: {admin_analysis.data[-1]}")
+        return {"status": "success", "message": "Analyse enregistrée"}
+    except Exception as e:
+        print(f"Erreur lors de la réception des données d'analyse: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/reports")
+async def admin_reports(data: dict):
+    """Recevoir les signalements de posts"""
+    try:
+        print(f"Signalement reçu: {data}")
+        # Stocker les signalements (pour l'instant en mémoire)
+        if not hasattr(admin_reports, 'data'):
+            admin_reports.data = []
+        
+        admin_reports.data.append(data)
+        print(f"Total signalements stockés: {len(admin_reports.data)}")
+        print(f"Dernier signalement: {admin_reports.data[-1]}")
+        return {"status": "success", "message": "Signalement enregistré"}
+    except Exception as e:
+        print(f"Erreur lors de la réception du signalement: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/reports")
+async def get_admin_reports():
+    """Obtenir les posts signalés"""
+    try:
+        if not hasattr(admin_reports, 'data'):
+            admin_reports.data = []
+        
+        return {"reports": admin_reports.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/analysis/stats")
+async def get_analysis_stats():
+    """Obtenir les statistiques d'analyse"""
+    try:
+        print("Récupération des statistiques d'analyse...")
+        
+        if not hasattr(admin_analysis, 'data'):
+            admin_analysis.data = []
+        
+        # Calculer des statistiques simples
+        total_analyses = len(admin_analysis.data)
+        recent_analyses = 0
+        
+        # Compter les analyses récentes (24 dernières heures) de manière sécurisée
+        for a in admin_analysis.data:
+            try:
+                if 'timestamp' in a and a['timestamp']:
+                    datetime.fromisoformat(a['timestamp'].replace('Z', '+00:00'))
+                    recent_analyses += 1
+            except (KeyError, ValueError, AttributeError) as timestamp_error:
+                print(f"Erreur de timestamp pour l'analyse {a}: {timestamp_error}")
+                continue
+        
+        stats = {
+            "total_analyses": total_analyses,
+            "recent_analyses": recent_analyses,
+            "average_time": "2.3s"  # simulé
+        }
+        
+        print(f"Statistiques calculées: {stats}")
+        return stats
+        
+    except Exception as e:
+        print(f"Erreur dans get_analysis_stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/analysis/details")
+async def get_detailed_analyses():
+    """Obtenir les analyses détaillées pour le dashboard admin"""
+    try:
+        # Retourner les analyses détaillées stockées
+        if not hasattr(admin_analysis, 'data'):
+            admin_analysis.data = []
+        
+        print(f"Récupération de {len(admin_analysis.data)} analyses détaillées")
+        return {"analyses": admin_analysis.data}
+    except Exception as e:
+        print(f"Erreur lors de la récupération des analyses détaillées: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/admin/analysis/clear")
+async def clear_all_analyses():
+    """Supprimer toutes les analyses"""
+    try:
+        if hasattr(admin_analysis, 'data'):
+            count = len(admin_analysis.data)
+            admin_analysis.data = []
+            print(f"Toutes les analyses ont été supprimées ({count} analyses)")
+            return {"message": f"Toutes les analyses ont été supprimées", "count": count}
+        else:
+            return {"message": "Aucune analyse à supprimer", "count": 0}
+    except Exception as e:
+        print(f"Erreur lors de la suppression des analyses: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/admin/analysis/{analysis_id}")
+async def delete_analysis(analysis_id: int):
+    """Supprimer une analyse spécifique"""
+    try:
+        if not hasattr(admin_analysis, 'data'):
+            return {"message": "Aucune analyse à supprimer", "count": 0}
+        
+        original_count = len(admin_analysis.data)
+        admin_analysis.data = [a for a in admin_analysis.data if a.get('post_id') != analysis_id]
+        deleted_count = original_count - len(admin_analysis.data)
+        
+        if deleted_count > 0:
+            print(f"Analyse {analysis_id} supprimée")
+            return {"message": f"Analyse supprimée avec succès", "count": deleted_count}
+        else:
+            return {"message": "Analyse non trouvée", "count": 0}
+    except Exception as e:
+        print(f"Erreur lors de la suppression de l'analyse {analysis_id}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/admin/analysis/batch")
+async def delete_batch_analyses(request: dict):
+    """Supprimer plusieurs analyses en lot"""
+    try:
+        analysis_ids = request.get("analysis_ids", [])
+        if not analysis_ids:
+            return {"message": "Aucun ID d'analyse fourni", "count": 0}
+        
+        if not hasattr(admin_analysis, 'data'):
+            return {"message": "Aucune analyse à supprimer", "count": 0}
+        
+        original_count = len(admin_analysis.data)
+        admin_analysis.data = [a for a in admin_analysis.data if a.get('post_id') not in analysis_ids]
+        deleted_count = original_count - len(admin_analysis.data)
+        
+        print(f"{deleted_count} analyses supprimées en lot")
+        return {"message": f"{deleted_count} analyses supprimées avec succès", "count": deleted_count}
+    except Exception as e:
+        print(f"Erreur lors de la suppression en lot: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/health")
 async def health_check():
-    """Vérification de santé des services IA"""
+    """Vérifier l'état de santé de tous les services"""
     try:
         services = {
             "chatbot": await chatbot.health_check(),
@@ -223,6 +428,8 @@ async def health_check():
             "timestamp": datetime.now().isoformat(),
             "services": services
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

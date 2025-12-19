@@ -243,7 +243,7 @@ const Profile = ({ standalone = false }) => {
         <SnowLayer />
       </div>
       
-      <main className={`pt-20 pb-32 px-6 transition-all duration-300 ${
+      <main className={`pt-16 sm:pt-20 pb-24 sm:pb-32 px-4 sm:px-6 transition-all duration-300 ${
         sidebarOpen ? 'lg:ml-72' : 'lg:ml-0'
       }`}>
         <div className="max-w-4xl mx-auto">
@@ -253,12 +253,12 @@ const Profile = ({ standalone = false }) => {
             transition={{ duration: 0.6 }}
           >
             {/* Header du profil */}
-            <div className="glass p-8 rounded-2xl mb-8">
-              <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl mb-8">
+              <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-6">
                 {/* Photo de profil */}
                 <div className="flex flex-col items-center">
                   <div className="relative">
-                    <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-xl overflow-hidden">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-xl overflow-hidden">
                       {profileData.profile_photo ? (
                         <img 
                           src={`http://localhost:3000${profileData.profile_photo}`} 
@@ -297,14 +297,14 @@ const Profile = ({ standalone = false }) => {
                 {/* Infos principales */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-4">
-                    <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <h1 className={`text-2xl sm:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       Mon Profil
                     </h1>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                       <button
                         onClick={handleEdit}
                         disabled={saving || uploadingPhoto}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-all text-sm sm:text-base ${
                           isEditing
                             ? 'bg-green-600 text-white hover:bg-green-700'
                             : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -328,7 +328,7 @@ const Profile = ({ standalone = false }) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Prénom
@@ -338,7 +338,7 @@ const Profile = ({ standalone = false }) => {
                         value={profileData.firstName}
                         onChange={(e) => handleChange('firstName', e.target.value)}
                         disabled={!isEditing}
-                        className={`w-full p-3 rounded-lg border ${
+                        className={`w-full p-2 sm:p-3 rounded-lg border text-sm ${
                           !isEditing
                             ? theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-500' : 'bg-gray-100 border-gray-300 text-gray-500'
                             : theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'
@@ -354,7 +354,7 @@ const Profile = ({ standalone = false }) => {
                         value={profileData.lastName}
                         onChange={(e) => handleChange('lastName', e.target.value)}
                         disabled={!isEditing}
-                        className={`w-full p-3 rounded-lg border ${
+                        className={`w-full p-2 sm:p-3 rounded-lg border text-sm ${
                           !isEditing
                             ? theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-500' : 'bg-gray-100 border-gray-300 text-gray-500'
                             : theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'
@@ -363,7 +363,7 @@ const Profile = ({ standalone = false }) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
                     <div>
                       <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Email
@@ -373,7 +373,7 @@ const Profile = ({ standalone = false }) => {
                         value={profileData.email}
                         onChange={(e) => handleChange('email', e.target.value)}
                         disabled={!isEditing}
-                        className={`w-full p-3 rounded-lg border ${
+                        className={`w-full p-2 sm:p-3 rounded-lg border text-sm ${
                           !isEditing
                             ? theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-500' : 'bg-gray-100 border-gray-300 text-gray-500'
                             : theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'
@@ -389,7 +389,7 @@ const Profile = ({ standalone = false }) => {
                         value={profileData.phone}
                         onChange={(e) => handleChange('phone', e.target.value)}
                         disabled={!isEditing}
-                        className={`w-full p-3 rounded-lg border ${
+                        className={`w-full p-2 sm:p-3 rounded-lg border text-sm ${
                           !isEditing
                             ? theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-500' : 'bg-gray-100 border-gray-300 text-gray-500'
                             : theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'

@@ -529,16 +529,16 @@ const Actualite = () => {
       
       <div className={`pt-16 transition-all duration-300 ${sidebarOpen ? 'md:ml-72' : 'md:ml-0'}`}>
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-          <div className={`max-w-2xl mx-auto py-4 sm:py-6 px-4`}>
+          <div className="max-w-2xl mx-auto py-6 px-4">
             {/* Bouton créer une publication */}
-            <div className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+            <div className={`mb-6 p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
                   VO
                 </div>
                 <button
                   onClick={() => setShowCreatePost(!showCreatePost)}
-                  className={`flex-1 p-2 sm:p-3 rounded-lg text-left text-sm sm:text-base ${
+                  className={`flex-1 p-3 rounded-lg text-left ${
                     theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'
                   }`}
                 >
@@ -616,18 +616,18 @@ const Actualite = () => {
             </div>
 
             {/* Liste des publications */}
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-6">
               {posts.map((post) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`p-3 sm:p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
+                  className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
                 >
                   {/* Header de la publication */}
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">
                         {post.avatar}
                       </div>
                       <div>
@@ -812,6 +812,9 @@ const Actualite = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                           </svg>
                         )}
+                        <span className="text-sm">
+                          {analyzing[post.id] ? 'Analyse...' : 'Analyser'}
+                        </span>
                       </button>
 
                       <button className={`flex items-center gap-2 transition-all ${

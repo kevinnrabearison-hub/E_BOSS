@@ -7,14 +7,21 @@ const analysisAPI = {
   // Analyser un post avec ChatGPT/Copilot
   analyzePost: async (content, postId = null) => {
     try {
-      const response = await axios.post(`${ANALYSIS_API_URL}/chatbot/chat`, {
-        message: `Analyse ce post et donne une réponse détaillée : "${content}"`,
+      const payload = {
+        message: `Analyse ce post et donne une réponse détaillée : ${content}`,
         context: "post_analysis",
-        user_id: postId
-      });
+        user_id: String(postId || "anonymous")
+      };
+      console.log('Payload envoyé:', payload);
+      const response = await axios.post(`${ANALYSIS_API_URL}/chatbot/chat`, payload);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de l\'analyse du post:', error);
+      if (error.response) {
+        console.error('Status:', error.response.status);
+        console.error('Data:', JSON.stringify(error.response.data, null, 2));
+        console.error('Headers:', error.response.headers);
+      }
       throw error;
     }
   },
@@ -24,12 +31,17 @@ const analysisAPI = {
     try {
       const response = await axios.post(`${ANALYSIS_API_URL}/messages/analyze`, {
         message: content,
+        sender_id: "sentiment_analysis",
         context: "sentiment_analysis",
         priority: "normal"
       });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de l\'analyse de sentiment:', error);
+      if (error.response) {
+        console.error('Status:', error.response.status);
+        console.error('Data:', error.response.data);
+      }
       throw error;
     }
   },

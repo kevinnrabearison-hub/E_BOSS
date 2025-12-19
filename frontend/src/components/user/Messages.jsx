@@ -1,263 +1,328 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useTheme } from '../../context/theme-context';
+import { Search, MoreVertical, Phone, Video, Paperclip, Smile, Send, Settings, Users, Calendar, Bookmark } from 'lucide-react';
 import DashboardNavbar from './dashboard-navbar';
 import Sidebar from './sidebar';
 import Footer from '../footer';
 
-const Messages = () => {
+const Messages = ({ standalone = true }) => {
   const { theme } = useTheme();
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [replyText, setReplyText] = useState('');
+  const [replies, setReplies] = useState([]);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  // 🔹 Liste de mots toxiques
+  const toxicWords = ['merde', 'con', 'connard', 'conne', 'salope', 'enculé', 'enculée', 'chiant', 'bordel', 'ta gueule', 'nique', 'nique ta mère', 'branleur', 'branleuse', 'abruti', 'abrutie', 'imbécile', 'idiot', 'idiote', 'crétin', 'crétine', 'andouille', 'trou du cul', 'cul', 'culé', 'chiotte', 'chiottes', 'chié', 'chiée', 'chiant', 'chiarde', 'chiard', 'gueule', 'ferme ta gueule', 'fils de pute', 'fils de chien', 'pute', 'putasse', 'putain de merde', 'putain de bordel', 'putain de chiotte', 'putain de con', 'putain de connard', 'putain de salope', 'putain de bâtard', 'bâtard', 'bâtarde', 'ordure', 'sale con', 'sale connard', 'sale conne', 'sale pute', 'sale salope', 'sale bâtard', 'sale merde', 'sale chien', 'sale enfoiré', 'enfoiré', 'enfoirée', 'casse-couilles', 'couilles', 'couillon', 'couillonne', 'couillarde', 'couillasse', 'couillots', 'couillots de merde', 'couilles molles', 'couilles en or', 'couilles de singe', 'couilles de chien', 'couilles de taureau', 'couilles de merde', 'cul de merde', 'cul de sac', 'cul bordé de nouilles', 'cul terreux', 'cul serré', 'cul mou', 'cul sale', 'cul puant', 'cul chiant', 'cul chiotte', 'cul bordel', 'cul putain', 'cul connard', 'cul bâtard', 'cul enfoiré', 'cul ordure', 'cul salope', 'cul pute', 'cul branleur', 'cul abruti', 'cul imbécile', 'cul idiot', 'cul crétin', 'cul andouille', 'cul trou du cul', 'lelena ah', 'masospory', 'nemany', 'nique ta mère', 'lelena ah', 'masospory','nemany', 'nique ta mère'];
 
   const messages = [
     {
       id: 1,
-      sender: 'Marie Dubois',
+      sender: 'Kevinn',
       avatar: 'MD',
-      subject: 'Question sur le Sprint 2',
-      preview: 'Bonjour, j\'ai une question concernant la deuxième tâche du sprint...',
+      subject: 'Kevinn',
+      preview: 'Bonjour, est-ce que cava ?',
       time: '10:30',
       unread: true,
-      fullMessage: 'Bonjour, j\'ai une question concernant la deuxième tâche du sprint. Je ne suis pas sûr de comprendre comment implémenter la fonctionnalité de validation. Pourriez-vous me donner quelques indices ?\n\nJ\'ai essayé plusieurs approches mais je bloque sur la partie où il faut vérifier les données côté client avant l\'envoi.\n\nMerci d\'avance pour votre aide !',
-      color: 'from-purple-500 to-pink-500'
+      fullMessage: 'Bonjour, est-ce que cava ?',
+      color: 'from-purple-500 to-pink-500',
     },
     {
       id: 2,
-      sender: 'System',
+      sender: 'Karen',
       avatar: 'SY',
       subject: 'Rappel de cours',
-      preview: 'N\'oubliez pas votre cours de React Hooks prévu demain...',
+      preview: 'Cours React Hooks demain...',
       time: '09:15',
-      unread: true,
-      fullMessage: 'N\'oubliez pas votre cours de React Hooks prévu demain à 14h00. Nous aborderons les sujets suivants :\n\n• useState et useEffect avancés\n• Custom hooks\n• Performance optimization\n• Context API\n\nLe lien Zoom sera envoyé 30 minutes avant le début.\n\nÀ demain !',
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      id: 3,
-      sender: 'Thomas Martin',
-      avatar: 'TM',
-      subject: 'Projet collaboratif',
-      preview: 'Veux-tu rejoindre notre groupe pour le projet final...',
-      time: 'Hier',
       unread: false,
-      fullMessage: 'Salut !\n\nJe te contacte pour te proposer de rejoindre notre groupe pour le projet final. On est actuellement 3 personnes et on cherche une 4ème personne pour compléter l\'équipe.\n\nNotre projet consiste à créer une application de gestion de tâches avec :\n- Interface React\n- Backend Node.js\n- Base de données MongoDB\n- Authentification JWT\n\nSi ça t\'intéresse, fais-le moi savoir et on peut discuter des détails.\n\nThomas',
-      color: 'from-green-500 to-teal-500'
+      fullMessage: 'Cours React Hooks demain à 14h.',
+      color: 'from-blue-500 to-cyan-500',
     },
-    {
-      id: 4,
-      sender: 'Sophie Laurent',
-      avatar: 'SL',
-      subject: 'Feedback sur ton projet',
-      preview: 'J\'ai regardé ton dernier projet, c\'est vraiment impressionnant...',
-      time: '2 jours',
-      unread: false,
-      fullMessage: 'Salut !\n\nJ\'ai pris le temps de regarder ton dernier projet sur GitHub, et je dois dire que c\'est vraiment impressionnant !\n\nJ\'ai particulièrement aimé :\n- La structure du code est très propre\n- L\'interface utilisateur est intuitive\n- Les animations sont fluides\n- La documentation est complète\n\nPetite suggestion : tu pourrais ajouter des tests unitaires pour améliorer la qualité du code.\n\nContinue comme ça, tu es sur la bonne voie !\n\nSophie',
-      color: 'from-orange-500 to-red-500'
-    },
-    {
-      id: 5,
-      sender: 'Alex Chen',
-      avatar: 'AC',
-      subject: 'Session de codage',
-      preview: 'Tu es dispo pour une session de pair programming demain...',
-      time: '3 jours',
-      unread: false,
-      fullMessage: 'Hey !\n\nJe me demandais si tu serais dispo pour une session de pair programming demain après-midi ?\n\nJ\'aimerais qu\'on travaille ensemble sur l\'algorithme de tri que j\'essaie d\'implémenter. J\'ai quelques idées mais je bloque sur l\'optimisation.\n\nDis-moi si ça t\'intéresse et à quelle heure tu serais libre.\n\nAlex',
-      color: 'from-indigo-500 to-purple-500'
-    }
   ];
 
-  const filteredMessages = messages.filter(msg =>
-    msg.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    msg.preview.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMessages = messages.filter(
+    (msg) =>
+      msg.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      msg.subject.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // 🔹 ENVOI MESSAGE AVEC DÉTECTION TOXIQUE
+  const handleSend = () => {
+    if (!replyText.trim()) return;
+
+    const lowerText = replyText.toLowerCase();
+    const foundToxic = toxicWords.some(word => lowerText.includes(word));
+
+    if (foundToxic) {
+      setAlertMessage('⚠️ Le message contient des mots interdits et ne peut pas être envoyé.');
+      return;
+    }
+
+    setReplies((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        text: replyText,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ]);
+
+    setReplyText('');
+    setAlertMessage('');
+  };
 
   return (
     <>
-      <DashboardNavbar onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className={`pt-16 transition-all duration-300 ${sidebarOpen ? 'md:ml-72' : 'md:ml-0'}`}>
-        <div className={`h-[calc(100vh-4rem)] ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-          <div className={`h-full flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Liste des messages */}
-      <div className={`w-96 border-r ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-        {/* Header */}
-        <div className={`p-4 pt-6 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-          <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            Messages
-          </h2>
-          
-          {/* Barre de recherche */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Rechercher des messages..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 rounded-xl border transition-all ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500' 
-                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
-              }`}
-            />
-            <svg 
-              className={`absolute left-3 top-2.5 w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
+      {standalone && (
+        <>
+          <DashboardNavbar
+            onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+            sidebarOpen={sidebarOpen}
+          />
+          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        </>
+      )}
 
-        {/* Liste */}
-        <div className="overflow-y-auto h-[calc(100vh-12rem)]">
-          {filteredMessages.map((message) => (
-            <motion.div
-              key={message.id}
-              onClick={() => setSelectedMessage(message)}
-              className={`p-4 border-b cursor-pointer transition-all ${
-                theme === 'dark' ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-200 hover:bg-gray-100'
-              } ${selectedMessage?.id === message.id ? (theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100') : ''}
-              ${message.unread ? (theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50') : ''}
-              `}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${message.color} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
-                  {message.avatar}
+      <div className={`${standalone ? `pt-16 transition-all duration-300 ${sidebarOpen ? 'md:ml-72' : 'md:ml-0'}` : 'h-full'}`}>
+        <div className={`${standalone ? 'h-[calc(100vh-4rem)]' : 'h-[calc(100vh-8rem)]'} flex flex-col lg:flex-row ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50/80'}`}>
+          {/* SIDEBAR GAUCHE - STYLE TEAMS */}
+          <div className={`w-full lg:w-80 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden lg:flex' : 'flex'} lg:h-full h-auto lg:h-auto order-2 lg:order-1`}>
+            {/* Header Teams */}
+            <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="flex items-center justify-between mb-4">
+                <h1 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Messages</h1>
+                <div className="flex items-center space-x-2">
+                  <button className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+                    <Settings className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                  </button>
+                  <button className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+                    <Users className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                  </button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      {message.sender}
-                    </h3>
-                    <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {message.time}
-                    </span>
-                  </div>
-                  <h4 className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
-                    {message.subject}
-                  </h4>
-                  <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} truncate`}>
-                    {message.preview}
-                  </p>
-                </div>
-                {message.unread && (
-                  <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
-                )}
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Contenu du message */}
-      <div className="flex-1 flex flex-col">
-        {selectedMessage ? (
-          <>
-            {/* Header du message */}
-            <div className={`p-4 pt-6 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-              <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${selectedMessage.color} flex items-center justify-center text-white font-bold`}>
-                  {selectedMessage.avatar}
-                </div>
-                <div className="flex-1">
-                  <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedMessage.sender}
-                  </h3>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {selectedMessage.time}
-                  </p>
-                </div>
-                <button className={`p-2 rounded-lg transition-all ${
-                  theme === 'dark' 
-                    ? 'hover:bg-gray-800 text-gray-400 hover:text-white' 
-                    : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-                }`}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                  </svg>
-                </button>
-              </div>
-              <h2 className={`text-lg font-semibold mt-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {selectedMessage.subject}
-              </h2>
-            </div>
-
-            {/* Corps du message */}
-            <div className="flex-1 p-6 overflow-y-auto">
-              <div className={`whitespace-pre-wrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                {selectedMessage.fullMessage}
-              </div>
-            </div>
-
-            {/* Zone de réponse */}
-            <div className={`p-3 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-              <div className="flex items-end gap-2">
-                <button className={`p-2 rounded-lg transition-all ${
-                  theme === 'dark' 
-                    ? 'hover:bg-gray-800 text-gray-400 hover:text-white' 
-                    : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-                }`}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                  </svg>
-                </button>
-                <textarea
-                  placeholder="Tapez un message..."
-                  className={`flex-1 p-2 rounded-lg border resize-none h-10 max-h-32 ${
-                    theme === 'dark' 
-                      ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' 
-                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
+              
+              {/* Barre de recherche style Teams */}
+              <div className="relative">
+                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
+                <input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Rechercher des messages..."
+                  className={`w-full pl-10 pr-4 py-2 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-100 border-gray-200 text-gray-900 placeholder-gray-500'} border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                 />
-                <button className={`p-2 rounded-lg transition-all ${
-                  theme === 'dark' 
-                    ? 'hover:bg-gray-800 text-gray-400 hover:text-white' 
-                    : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-                }`}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+              </div>
+            </div>
+
+            {/* Navigation secondaire */}
+            <div className={`px-4 py-2 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="flex space-x-1">
+                <button className={`px-3 py-1.5 ${theme === 'dark' ? 'bg-blue-700' : 'bg-blue-600'} text-white rounded-md text-sm font-medium`}>
+                  Conversations
                 </button>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium text-sm">
-                  Envoyer
+                <button className={`px-3 py-1.5 ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'} rounded-md text-sm font-medium transition-colors`}>
+                  Équipes
+                </button>
+                <button className={`px-3 py-1.5 ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'} rounded-md text-sm font-medium transition-colors`}>
+                  Meetings
                 </button>
               </div>
             </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className={`w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center ${
-                theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-              }`}>
-                <svg className={`w-10 h-10 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </div>
-              <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                Sélectionnez un message
-              </h3>
-              <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                Choisissez un message dans la liste pour voir son contenu
-              </p>
+
+            {/* Liste des conversations */}
+            <div className="flex-1 overflow-y-auto">
+              {filteredMessages.map((message) => (
+                <motion.div
+                  key={message.id}
+                  onClick={() => {
+                    setSelectedMessage(message);
+                    setReplies([]);
+                    setAlertMessage('');
+                  }}
+                  className={`p-4 cursor-pointer border-b transition-all duration-200 ${
+                    selectedMessage?.id === message.id 
+                      ? theme === 'dark' 
+                        ? 'bg-gradient-to-r from-blue-900/50 to-blue-800/30 border-l-4 border-l-blue-500 shadow-lg' 
+                        : 'bg-gradient-to-r from-blue-50 to-blue-100/50 border-l-4 border-l-blue-600 shadow-lg'
+                      : theme === 'dark'
+                        ? 'hover:bg-gray-700/50 border-gray-700/30'
+                        : 'hover:bg-gray-50/50 border-gray-100/50'
+                  }`}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${message.color} shadow-md ${selectedMessage?.id === message.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}>
+                      {message.avatar}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className={`font-semibold truncate ${selectedMessage?.id === message.id ? (theme === 'dark' ? 'text-blue-300' : 'text-blue-900') : (theme === 'dark' ? 'text-gray-100' : 'text-gray-900')}`}>
+                          {message.sender}
+                        </h3>
+                        <span className={`text-xs ${selectedMessage?.id === message.id ? (theme === 'dark' ? 'text-blue-400' : 'text-blue-600') : (theme === 'dark' ? 'text-gray-400' : 'text-gray-500')}`}>
+                          {message.time}
+                        </span>
+                      </div>
+                      <p className={`text-sm truncate mt-1 ${selectedMessage?.id === message.id ? (theme === 'dark' ? 'text-blue-200' : 'text-blue-800') : (theme === 'dark' ? 'text-gray-300' : 'text-gray-600')}`}>
+                        {message.preview}
+                      </p>
+                      {message.unread && (
+                        <div className="mt-1">
+                          <span className={`inline-block w-2 h-2 ${selectedMessage?.id === message.id ? 'bg-blue-500' : 'bg-blue-600'} rounded-full`}></span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
-        )}
-      </div>
+
+          {/* ZONE DE CONVERSATION - STYLE TEAMS */}
+          <div className={`flex-1 flex flex-col ${theme === 'dark' ? 'bg-gray-800/60' : 'bg-white/60'} glass order-1 lg:order-2`}>
+            {selectedMessage ? (
+              <>
+                {/* HEADER CONVERSATION */}
+                <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b ${theme === 'dark' ? 'border-gray-700/60 bg-gray-800/60' : 'border-gray-200/60 bg-white/60'}`}>
+                  <div className="flex items-center justify-between">
+                    {/* Bouton retour mobile */}
+                    <button 
+                      onClick={() => setSelectedMessage(null)}
+                      className={`lg:hidden p-2 mr-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm ${selectedMessage.color}`}>
+                        {selectedMessage.avatar}
+                      </div>
+                      <div>
+                        <h2 className={`font-semibold text-sm sm:text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{selectedMessage.sender}</h2>
+                        <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>En ligne</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <button className={`p-1.5 sm:p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+                        <Phone className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                      </button>
+                      <button className={`p-1.5 sm:p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+                        <Video className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                      </button>
+                      <button className={`p-1.5 sm:p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+                        <MoreVertical className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ZONE DES MESSAGES */}
+                <div className={`flex-1 overflow-y-auto ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
+                  <div className="space-y-4">
+                    {/* Message reçu */}
+                    <div className="flex items-start space-x-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${selectedMessage.color} shadow-lg`}>
+                        {selectedMessage.avatar}
+                      </div>
+                      <div className="max-w-lg">
+                        <div className={`${theme === 'dark' ? 'bg-gray-700/80 border-gray-600/50' : 'bg-white/90 border-gray-200/50'} p-4 rounded-2xl shadow-lg backdrop-blur-sm border`}>
+                          <p className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'} text-sm leading-relaxed`}>{selectedMessage.fullMessage}</p>
+                        </div>
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-2 ml-1`}>{selectedMessage.time}</p>
+                      </div>
+                    </div>
+
+                    {/* Réponses envoyées */}
+                    {replies.map((reply) => (
+                      <div key={reply.id} className="flex items-start space-x-3 justify-end">
+                        <div className="max-w-lg">
+                          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm">
+                            <p className="text-sm leading-relaxed">{reply.text}</p>
+                          </div>
+                          <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-2 mr-1 text-right`}>{reply.time}</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
+                          MOI
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {/* Zone de saisie */}
+                    {alertMessage && (
+                      <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-red-900/30 border border-red-700' : 'bg-red-50 border border-red-200'}`}>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-red-300' : 'text-red-700'}`}>{alertMessage}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* ZONE DE RÉPONSE */}
+                <div className={`border-t p-3 sm:p-4 ${theme === 'dark' ? 'border-gray-700/60 bg-gray-800/60' : 'border-gray-200/60 bg-white/60'}`}>
+                  <div className="flex items-end space-x-2 sm:space-x-3">
+                    <div className="flex-1 flex items-center space-x-1 sm:space-x-2 border rounded-lg px-3 py-2 sm:px-4 sm:py-2 bg-transparent">
+                      <button className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} transition-colors rounded-lg`}>
+                        <Paperclip className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                      </button>
+                      <textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Tapez un message..."
+                        className={`flex-1 py-2 px-1 bg-transparent resize-none focus:outline-none text-sm max-h-32 ${theme === 'dark' ? 'text-white placeholder-gray-400' : 'text-gray-900 placeholder-gray-500'}`}
+                        rows={1}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSend();
+                          }
+                        }}
+                      />
+                      <button className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} transition-colors rounded-lg`}>
+                        <Smile className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleSend}
+                      disabled={!replyText.trim()}
+                      className={`p-2 rounded-lg transition-colors ${
+                        replyText.trim() 
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                          : theme === 'dark' ? 'bg-gray-700 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-2 space-y-1 sm:space-y-0">
+                    <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Appuyez sur Entrée pour envoyer</p>
+                    <div className="flex items-center space-x-2">
+                      <button className={`text-xs ${theme === 'dark' ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'}`}>
+                        <Bookmark className="w-3 h-3" />
+                      </button>
+                      <button className={`text-xs ${theme === 'dark' ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'}`}>
+                        <Calendar className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+                <div className="text-center">
+                  <Users className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
+                  <h3 className={`text-lg sm:text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Sélectionnez une conversation</h3>
+                  <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Choisissez une conversation dans la liste pour commencer à discuter</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-      
-      <Footer />
+
+      {standalone && <Footer />}
     </>
   );
 };

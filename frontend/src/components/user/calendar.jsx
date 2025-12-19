@@ -100,14 +100,14 @@ const Calendar = () => {
 
   return (
     <motion.div
-      className="glass p-6 rounded-2xl"
+      className="glass p-4 sm:p-6 rounded-2xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       {/* Header du calendrier */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h2 className={`text-xl sm:text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
           Calendrier d'Apprentissage
         </h2>
         <div className="flex items-center gap-2">
@@ -138,9 +138,9 @@ const Calendar = () => {
       {/* Grille du calendrier */}
       <div className="mb-6">
         {/* Jours de la semaine */}
-        <div className="grid grid-cols-7 gap-2 mb-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
           {weekDays.map(day => (
-            <div key={day} className={`text-center text-sm font-medium p-2 ${
+            <div key={day} className={`text-center text-xs sm:text-sm font-medium p-1 sm:p-2 ${
               theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
             }`}>
               {day}
@@ -149,7 +149,7 @@ const Calendar = () => {
         </div>
 
         {/* Jours du mois */}
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {calendarDays.map((day, index) => {
             const dayEvents = getEventForDay(day);
             const isCurrentDay = isToday(day);
@@ -160,7 +160,7 @@ const Calendar = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => day && setSelectedDate(`${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`)}
-                className={`relative p-2 h-20 rounded-lg cursor-pointer transition-all ${
+                className={`relative p-1 sm:p-2 h-16 sm:h-20 rounded-lg cursor-pointer transition-all ${
                   !day ? '' : 
                   isCurrentDay ? 'ring-2 ring-blue-500 bg-blue-500/20' :
                   theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-100'
@@ -168,7 +168,7 @@ const Calendar = () => {
               >
                 {day && (
                   <>
-                    <div className={`text-sm font-medium mb-1 ${
+                    <div className={`text-xs sm:text-sm font-medium mb-1 ${
                       isCurrentDay ? 'text-blue-500' : 
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                     }`}>
@@ -176,18 +176,18 @@ const Calendar = () => {
                     </div>
                     
                     {/* Indicateurs d'événements */}
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                       {dayEvents?.slice(0, 2).map((event, eventIndex) => (
                         <div
                           key={eventIndex}
-                          className={`text-xs p-1 rounded text-white truncate ${event.color}`}
+                          className={`text-xs p-0.5 sm:p-1 rounded text-white truncate ${event.color}`}
                           title={event.title}
                         >
                           {event.title}
                         </div>
                       ))}
                       {dayEvents?.length > 2 && (
-                        <div className={`text-xs p-1 rounded text-gray-500 ${
+                        <div className={`text-xs p-0.5 sm:p-1 rounded text-gray-500 ${
                           theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
                         }`}>
                           +{dayEvents.length - 2}

@@ -17,6 +17,8 @@ import CalendarSection from './dashboard-sections/calendar/calendar';
 import ProgressSection from "./dashboard-sections/progress/progress";
 import AchievementsSection from "./dashboard-sections/Achievement/achievements";
 import RessourcesSection from "./dashboard-sections/ressources/ressources";
+import ActualiteSection from "./actuality";
+import MessagesSection from "./Messages";
 
 const Dashboard = () => {
   const { theme } = useTheme();
@@ -94,8 +96,30 @@ const Dashboard = () => {
           return <AchievementsSection />;
         case 'ressources':
           return <RessourcesSection />;
+        case 'actuality':
+          return <ActualiteSection />;
+        case 'messages':
+          return <MessagesSection standalone={false} />;
         default:
-          return <div>Section non trouvée</div>;
+          return (
+            <div className="flex flex-col items-center justify-center h-64 text-center">
+              <div className="text-gray-500 mb-4">
+                <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Section non trouvée</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  La section "{currentSection}" n'existe pas
+                </p>
+                <Link 
+                  to="/dashboard/overview"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Retour à l'aperçu
+                </Link>
+              </div>
+            </div>
+          );
       }
     }
 
@@ -103,22 +127,22 @@ const Dashboard = () => {
     return (
       <div className="h-[calc(100vh-8rem)] flex flex-col">
         {/* En-tête avec statistiques et timer */}
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
           <QuickStats />
-          <div className="glass p-4">
+          <div className="glass p-4 w-full sm:w-auto">
             <StudyTimer />
           </div>
         </div>
 
         {/* Grille principale */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 overflow-hidden">
+        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4 lg:gap-6 flex-1 overflow-hidden">
           {/* Colonne de gauche - Mes Cours */}
-          <div className="lg:col-span-2 flex flex-col h-full">
-            <div className="glass p-6 flex-1 flex flex-col overflow-hidden">
-              <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <div className="xl:col-span-2 lg:col-span-1 flex flex-col h-full">
+            <div className="glass p-4 sm:p-6 flex-1 flex flex-col overflow-hidden">
+              <h2 className={`text-lg sm:text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Mes Cours
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto flex-1 pr-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 overflow-y-auto flex-1 pr-2">
                 {courses.map((course) => (
                   <ProgressCard 
                     key={course.id} 
@@ -136,9 +160,9 @@ const Dashboard = () => {
           </div>
 
           {/* Colonne de droite - Activité récente */}
-          <div className="flex flex-col space-y-6 h-full">
-            <div className="glass p-6 flex-1">
-              <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <div className="flex flex-col space-y-4 lg:space-y-6 h-full">
+            <div className="glass p-4 sm:p-6 flex-1">
+              <h2 className={`text-lg sm:text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Activité récente
               </h2>
               <div className="h-[calc(100%-2.5rem)] overflow-y-auto pr-2">
@@ -147,11 +171,11 @@ const Dashboard = () => {
             </div>
 
             {/* Section Sprints */}
-            <div className="glass p-6">
-              <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <div className="glass p-4 sm:p-6">
+              <h2 className={`text-lg sm:text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Sprints Actifs
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {sprints.map((sprint) => (
                   <SprintProgress 
                     key={sprint.id} 
