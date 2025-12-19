@@ -10,26 +10,45 @@ import Testimonials from "./sections/testimonials";
 import PricingPlans from "./sections/pricing-plans";
 import CallToAction from "./sections/call-to-action";
 import { useTheme } from "./context/theme-context";
+import { useChristmas } from "./context/christmas-context";
+import ChristmasWrapper from "./components/ChristmasWrapper";
 
 export default function App() {
     const { theme } = useTheme();
+    const { isChristmasMode } = useChristmas();
     
     return (
-        <>
+        <ChristmasWrapper>
             <LenisScroll />
             <Navbar />
             
-            {/* Background Blobs */}
+            {/* Background Blobs modifiés pour Noël */}
             <div className="fixed inset-0 overflow-hidden -z-20 pointer-events-none">
-                <div className={`absolute rounded-full top-80 left-2/5 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
-                    theme === 'dark' ? 'bg-[#4C1D95]' : 'bg-[#E91E63]'
-                }`} />
-                <div className={`absolute rounded-full top-80 right-0 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
-                    theme === 'dark' ? 'bg-[#1E3A8A]' : 'bg-[#2E08CF]'
-                }`} />
-                <div className={`absolute rounded-full top-0 left-1/2 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
-                    theme === 'dark' ? 'bg-[#7C3AED]' : 'bg-[#F26A06]'
-                }`} />
+                {isChristmasMode ? (
+                    <>
+                        <div className={`absolute rounded-full top-80 left-2/5 -translate-x-1/2 size-130 blur-[100px] opacity-40 ${
+                            theme === 'dark' ? 'bg-[#B91C1C]' : 'bg-[#DC2626]'
+                        }`} />
+                        <div className={`absolute rounded-full top-80 right-0 -translate-x-1/2 size-130 blur-[100px] opacity-40 ${
+                            theme === 'dark' ? 'bg-[#15803D]' : 'bg-[#16A34A]'
+                        }`} />
+                        <div className={`absolute rounded-full top-0 left-1/2 -translate-x-1/2 size-130 blur-[100px] opacity-40 ${
+                            theme === 'dark' ? 'bg-[#FBBF24]' : 'bg-[#F59E0B]'
+                        }`} />
+                    </>
+                ) : (
+                    <>
+                        <div className={`absolute rounded-full top-80 left-2/5 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
+                            theme === 'dark' ? 'bg-[#4C1D95]' : 'bg-[#E91E63]'
+                        }`} />
+                        <div className={`absolute rounded-full top-80 right-0 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
+                            theme === 'dark' ? 'bg-[#1E3A8A]' : 'bg-[#2E08CF]'
+                        }`} />
+                        <div className={`absolute rounded-full top-0 left-1/2 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
+                            theme === 'dark' ? 'bg-[#7C3AED]' : 'bg-[#F26A06]'
+                        }`} />
+                    </>
+                )}
             </div>
 
             <main className='px-4'>
@@ -54,6 +73,6 @@ export default function App() {
             </main>
             
             <Footer />
-        </>
+        </ChristmasWrapper>
     );
 }

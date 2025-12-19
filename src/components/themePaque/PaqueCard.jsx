@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 
-export function FrostCard({ children, className = "", onClick }) {
+export function PaqueCard({ children, className = "", onClick }) {
     return (
         <motion.div
             className={`
                 relative overflow-hidden rounded-xl backdrop-blur-md
                 border border-white/20 bg-gradient-to-br from-white/10 to-white/5
-                shadow-lg shadow-red-900/10
+                shadow-lg shadow-purple-900/10
                 before:absolute before:inset-0 before:bg-gradient-to-br 
-                before:from-red-500/5 before:via-green-500/5 before:to-white/5
+                before:from-purple-400/5 before:via-pink-300/5 before:to-yellow-300/5
                 before:border before:border-white/10
                 ${className}
             `}
@@ -18,22 +18,29 @@ export function FrostCard({ children, className = "", onClick }) {
             transition={{ duration: 0.3 }}
             onClick={onClick}
         >
-            {/* Effet de lumière de Noël */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-red-500/20 to-green-500/20 rounded-full blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-green-500/20 to-white/20 rounded-full blur-3xl" />
+            {/* Effet de lumière de Pâques */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-purple-400/20 to-pink-300/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-yellow-300/20 to-green-300/20 rounded-full blur-3xl" />
             
-            {/* Effet de neige */}
+            {/* Effet d'œufs de Pâques */}
             <div className="absolute inset-0 overflow-hidden">
-                {[...Array(20)].map((_, i) => (
+                {[...Array(15)].map((_, i) => (
                     <div
                         key={i}
-                        className="absolute w-1 h-1 bg-white rounded-full animate-fall"
+                        className="absolute animate-float"
                         style={{
                             left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
                             animationDelay: `${Math.random() * 5}s`,
-                            opacity: Math.random() * 0.5 + 0.3
+                            opacity: Math.random() * 0.3 + 0.1
                         }}
-                    />
+                    >
+                        <div className={`w-3 h-4 rounded-full ${
+                            i % 3 === 0 ? 'bg-purple-400/30' :
+                            i % 3 === 1 ? 'bg-pink-300/30' :
+                            'bg-yellow-300/30'
+                        }`} />
+                    </div>
                 ))}
             </div>
             

@@ -1,18 +1,19 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+import { BrowserRouter } from 'react-router-dom'
+import { ThemeProvider } from './context/theme-context'
+import { ChristmasProvider } from './context/christmas-context'
 
-import AppRoutes from "./routes.jsx";
-import "./index.css";
-
-import { ThemeProvider } from "./context/theme-context";
-
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-        <AppRoutes />
+        <ChristmasProvider>
+          <App />
+        </ChristmasProvider>
       </ThemeProvider>
     </BrowserRouter>
-  </StrictMode>
-);
+  </React.StrictMode>,
+)
