@@ -193,10 +193,14 @@ body:not(.dark) .btn:hover {
     transform: translateY(-10px) rotate(10deg);
   }
 }
+.b {
+  text-align: center;
+}
 
 /* Effets pour le mode Noël */
 .christmas-button {
   animation: button-glow 2s ease-in-out infinite;
+
 }
 
 .christmas-emoji {
